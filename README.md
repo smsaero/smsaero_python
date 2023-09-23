@@ -38,3 +38,8 @@ Get credentials from account settings page: https://smsaero.ru/cabinet/settings/
     if __name__ == '__main__':
         data = send_sms(70000000000, 'Hello, World!')
         pprint(data)
+
+
+### License
+
+    MIT License
