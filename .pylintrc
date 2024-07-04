@@ -1,0 +1,25 @@
+[MASTER]
+persistent=yes
+ignore=tests
+
+[MESSAGES CONTROL]
+disable=
+
+[SIMILARITIES]
+min-similarity-lines=6
+ignore-comments=yes
+ignore-docstrings=yes
+
+[MISCELLANEOUS]
+notes=FIXME,XXX,TODO
+
+[FORMAT]
+max-line-length=120
+max-module-lines=1500
+indent-string='    '
+
+[DESIGN]
+max-args=15
+max-branches=15
+max-attributes=9
+max-public-methods=50
