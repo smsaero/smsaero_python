@@ -1,0 +1,12 @@
+.env
+.tox
+*.egg-info
+.dccache
+.coverage
+dist
+build
+.idea
+.venv
+.vscode
+__pycache__
+*.py[co]

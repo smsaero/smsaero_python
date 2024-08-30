@@ -1,0 +1,57 @@
+variables:
+  RELEASE_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+
+stages:
+  - test
+  - push
+
+
+test:
+  stage: test
+  timeout: 10m
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t test -f Dockerfile --no-cache .
+    - docker run --rm test /bin/bash -c 'ruff check --config .ruff.toml ./smsaero'
+    - docker run --rm test /bin/bash -c 'flake8 --config=.flake8 ./smsaero'
+    - docker run --rm test /bin/bash -c 'pylint ./smsaero'
+    - docker run --rm test /bin/bash -c 'mypy ./smsaero'
+    - docker run --rm test /bin/bash -c 'pytest -v -s []'
+    - docker run --rm test /bin/bash -c 'coverage run --omit=app/command_line.py -m pytest && coverage report --fail-under=100'
+  after_script:
+    - docker rmi -f test || true
+  retry:
+    max: 1
+    when: runner_system_failure
+
+
+push to registry:
+  image: docker:latest
+  stage: push
+  needs: [test]
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker image prune -f
+  script:
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        tag=""
+        echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+      else
+        tag=":$CI_COMMIT_REF_SLUG"
+        echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
+      fi
+    - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" -t "$RELEASE_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE${tag}"
+    - docker push "$RELEASE_IMAGE"
+    - docker rmi -f "$CI_REGISTRY_IMAGE${tag}" || true
+    - docker rmi -f "$RELEASE_IMAGE" || true
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile

@@ -1,0 +1,7 @@
+include README.md
+include LICENSE
+include AUTHORS.md
+include CONTRIBUTING.md
+include requirements/*
+recursive-exclude * .DS_Store .env tests __pycache__ *.py[co] .idea* .git* .tox* .cache* .pytest_cache* .coverage dist build .dccache .mypy_cache .vscode* .vscode
+recursive-include smsaero *.py *.po *.mo
