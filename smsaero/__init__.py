@@ -5,8 +5,8 @@ The SmsAero class provides methods for sending SMS messages, checking the status
 managing contacts, managing groups, managing the blacklist, and more.
 
 Example:
-    smsaero = SmsAero(email="user@example.com", api_key="your_api_key")
-    smsaero.send_sms(number=1234567890, text="Hello, World!")
+    smsaero = SmsAero(email="your_email", api_key="your_api_key")
+    smsaero.send_sms(number=70000000000, text="Hello, World!")
 
 This module also provides several exception classes for handling errors that may occur when interacting with the API.
 

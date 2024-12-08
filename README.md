@@ -20,8 +20,8 @@ from pprint import pprint
 from smsaero import SmsAero, SmsAeroException
 
 
-SMSAERO_EMAIL = 'your email'
-SMSAERO_API_KEY = 'your api key'
+SMSAERO_EMAIL = "your email"
+SMSAERO_API_KEY = "your api key"
 
 
 def send_sms(phone: int, message: str) -> dict:
@@ -39,9 +39,9 @@ def send_sms(phone: int, message: str) -> dict:
     return api.send_sms(phone, message)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
-        result = send_sms(70000000000, 'Hello, World!')
+        result = send_sms(70000000000, "Hello, World!")
         pprint(result)
     except SmsAeroException as e:
         print(f"An error occurred: {e}")

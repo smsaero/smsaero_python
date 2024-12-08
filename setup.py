@@ -10,7 +10,7 @@ with open("README.md", "r", encoding="utf-8") as file:
 setup(
     name="smsaero_api",
     version="3.0.0",
-    description="SmsAero API client",
+    description="Python client for working with SmsAero API.",
     keywords=[
         "smsaero",
         "api",
@@ -23,8 +23,17 @@ setup(
     long_description_content_type="text/markdown",
     author="SmsAero",
     author_email="admin@smsaero.ru",
+    maintainer="SmsAero Team",
+    maintainer_email="support@smsaero.ru",
     help_center="https://smsaero.ru/support/",
     url="https://github.com/smsaero/smsaero_python/",
+    project_urls={
+        "Homepage": "https://smsaero.ru/",
+        "Repository": "https://github.com/smsaero/smsaero_python/",
+        "Bug Tracker": "https://github.com/smsaero/smsaero_python/issues",
+        "Help Center": "https://smsaero.ru/support/",
+    },
+    download_url="https://github.com/smsaero/smsaero_python/archive/refs/tags/3.0.0.tar.gz",
     license="MIT",
     packages=find_packages(exclude=["tests", "tests.*"]),
     python_requires=">=3.6",
@@ -55,10 +64,14 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
+        "Environment :: Console",
         "Intended Audience :: Developers",
+        "Intended Audience :: System Administrators",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
@@ -74,6 +87,7 @@ setup(
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
+    platforms=["any"],
     entry_points={
         "console_scripts": [
             "smsaero_send=smsaero.command_line:main",
