@@ -3,7 +3,7 @@ persistent=yes
 ignore=tests
 
 [MESSAGES CONTROL]
-disable=
+disable=R0917
 
 [SIMILARITIES]
 min-similarity-lines=6
