@@ -32,3 +32,5 @@ LICENSE
 MANIFEST.in
 .dccache
 __pycache__
+.gitlab-ci.yml
+.travis.yml

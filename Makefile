@@ -22,7 +22,7 @@ scenario:
 .PHONY: coverage
 # target: coverage - Calculate code coverage
 coverage:
-	@coverage run --omit=smsaero/command_line.py -m pytest && coverage report -m
+	@coverage run -m pytest && coverage report -m
 
 .PHONY: docker-build-and-push
 # target: docker-build-and-push - Build and push Docker image

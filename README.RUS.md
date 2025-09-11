@@ -57,11 +57,11 @@ def send_telegram_code(phone: int, code: int, sign: str = None, text: str = None
 if __name__ == '__main__':
     try:
         # Отправка SMS
-        result = send_sms(79038805678, 'Hello, World!')
+        result = send_sms(70000000000, 'Hello, World!')
         pprint(result)
         
         # Отправка кода в Telegram
-        telegram_result = send_telegram_code(79038805678, 1234, "SMS Aero", "Ваш код 1234")
+        telegram_result = send_telegram_code(70000000000, 1234, "SMS Aero", "Ваш код 1234")
         pprint(telegram_result)
     except SmsAeroException as e:
         print(f"An error occurred: {e}")
@@ -79,14 +79,14 @@ if __name__ == '__main__':
 SMSAERO_EMAIL="ваш email"
 SMSAERO_API_KEY="ваш api key"
 
-smsaero_send --email "$SMSAERO_EMAIL" --api_key "$SMSAERO_API_KEY" --phone 79038805678 --message 'Hello, World!'
+smsaero_send --email "$SMSAERO_EMAIL" --api_key "$SMSAERO_API_KEY" --phone 70000000000 --message 'Hello, World!'
 ```
 
 ## Запуск в Docker (demo):
 
 ```bash
 docker pull 'smsaero/smsaero_python:latest'
-docker run -it --rm 'smsaero/smsaero_python:latest' smsaero_send --email "ваш email" --api_key "ваш api key" --phone 79038805678 --message 'Привет, Мир!'
+docker run -it --rm 'smsaero/smsaero_python:latest' smsaero_send --email "ваш email" --api_key "ваш api key" --phone 70000000000 --message 'Привет, Мир!'
 ```
 
 ## Совместимость с версиями Python:
