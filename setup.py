@@ -1,4 +1,4 @@
-"""Setup script for the SmsAero API client package."""
+"""Setup script for the SMS Aero API client package."""
 
 from setuptools import setup, find_packages
 
@@ -9,8 +9,8 @@ with open("README.md", "r", encoding="utf-8") as file:
 
 setup(
     name="smsaero_api",
-    version="3.0.0",
-    description="Python client for working with SmsAero API.",
+    version="3.1.1",
+    description="Python client for working with SMS Aero API.",
     keywords=[
         "smsaero",
         "api",
@@ -21,9 +21,9 @@ setup(
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="SmsAero",
+    author="SMS Aero",
     author_email="admin@smsaero.ru",
-    maintainer="SmsAero Team",
+    maintainer="SMS Aero Team",
     maintainer_email="support@smsaero.ru",
     help_center="https://smsaero.ru/support/",
     url="https://github.com/smsaero/smsaero_python/",
@@ -33,7 +33,7 @@ setup(
         "Bug Tracker": "https://github.com/smsaero/smsaero_python/issues",
         "Help Center": "https://smsaero.ru/support/",
     },
-    download_url="https://github.com/smsaero/smsaero_python/archive/refs/tags/3.0.0.tar.gz",
+    download_url="https://github.com/smsaero/smsaero_python/archive/refs/tags/3.1.0.tar.gz",
     license="MIT",
     packages=find_packages(exclude=["tests", "tests.*"]),
     python_requires=">=3.6",
@@ -94,6 +94,6 @@ setup(
         ],
     },
     options={
-        "bdist_wheel": {"universal": True},
+        "bdist_wheel": {"universal": False},
     },
 )

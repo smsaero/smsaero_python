@@ -58,6 +58,7 @@ Ready to contribute? Here's how to set up `smsaero_python` for local development
     mkvirtualenv smsaero_python
     workon smsaero_python
     python setup.py develop
+    pip install -e .[dev]
     ```
 
 4. Create a branch for local development:

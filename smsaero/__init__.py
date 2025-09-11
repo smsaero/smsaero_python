@@ -1,5 +1,5 @@
 """
-This module provides the SmsAero class for interacting with the SmsAero API.
+This module provides the SmsAero class for interacting with the SMS Aero API.
 
 The SmsAero class provides methods for sending SMS messages, checking the status of sent messages,
 managing contacts, managing groups, managing the blacklist, and more.
@@ -11,7 +11,7 @@ Example:
 This module also provides several exception classes for handling errors that may occur when interacting with the API.
 
 Classes:
-    SmsAero: Provides methods for interacting with the SmsAero API.
+    SmsAero: Provides methods for interacting with the SMS Aero API.
     SmsAeroException: The base class for all exceptions raised by this module.
     SmsAeroConnectionException: Raised when a connection error occurs.
     SmsAeroNoMoneyException: Raised when there is not enough money on the account to perform an operation.
@@ -72,7 +72,7 @@ class SmsAero:
         "@gate.smsaero.net/v2/",
     ]
     # Default signature for the messages
-    SIGNATURE = "Sms Aero"
+    SIGNATURE = "SMS Aero"
 
     def __init__(
         self,
@@ -101,7 +101,7 @@ class SmsAero:
         self.__gate = url_gate
         self.__sign = signature
         self.__sess = requests.session()
-        self.__sess.headers.update({'User-Agent': 'SAPythonClient/3.0.0'})
+        self.__sess.headers.update({"User-Agent": "SAPythonClient/3.1.0"})
         self.__time = timeout
         self.__pnum = allow_phone_validation
         self.__resp: Optional[Response] = None
@@ -315,7 +315,7 @@ class SmsAero:
         Example response:
         {
             "id": 12345,
-            "from": "Sms Aero",
+            "from": "SMS Aero",
             "number": "79031234567",
             "text": "Hello, World!",
             "status": 0,
@@ -346,7 +346,7 @@ class SmsAero:
         Example response:
         {
             "id": 12345,
-            "from": "Sms Aero",
+            "from": "SMS Aero",
             "number": "79031234567",
             "text": "Hello, World!",
             "status": 1,
@@ -382,7 +382,7 @@ class SmsAero:
         {
             "0": {
                 "id": 12345,
-                "from": "Sms Aero",
+                "from": "SMS Aero",
                 "number": "79031234567",
                 "text": "Hello, World!",
                 "status": 1,
@@ -1104,6 +1104,77 @@ class SmsAero:
         self.page_validate(page)
         return self.request("viber/statistic", {"sendingId": int(sending_id)}, page=page)
 
+    def send_telegram(
+        self,
+        number: Union[int, List[int]],
+        code: int,
+        sign: Optional[str] = None,
+        text: Optional[str] = None,
+    ) -> Dict:
+        """
+        Sends a Telegram code to the specified number or numbers.
+
+        Parameters:
+        number (Union[int, List[int]]): The recipient's phone number or a list of phone numbers.
+        code (int): The Telegram code (4 to 8 digits).
+        sign (str, optional): The SMS sender name.
+        text (str, optional): The SMS message text.
+
+        When using text and sign parameters, if the Telegram code is not delivered,
+        an SMS will be sent with the specified values.
+
+        Returns:
+        Dict: The server's response in JSON format.
+
+        Example response:
+        {
+            "id": 1,
+            "number": "79990000000",
+            "telegramCode": "1234",
+            "smsText": "Ваш код 1234",
+            "smsFrom": "SMS Aero",
+            "idSms": null,
+            "status": 0,
+            "extendStatus": "queue",
+            "cost": "1.00",
+            "dateCreate": 1732796285
+        }
+        """
+        self.send_telegram_validate(number, code, sign, text)
+        data: Dict = {"code": int(code)}
+        data.update(**self.fill_nums(number))
+        if sign:
+            data["sign"] = sign
+        if text:
+            data["text"] = text
+        return self.request("telegram/send", data)
+
+    def telegram_status(self, telegram_id: int) -> Dict:
+        """
+        Retrieves the status of a Telegram code delivery.
+
+        Parameters:
+        telegram_id (int): The message ID returned by the service when sending.
+
+        Returns:
+        Dict: The server's response in JSON format.
+
+        Example response:
+        {
+            "id": 1,
+            "number": "79990000000",
+            "telegramCode": "1234",
+            "smsText": "Ваш код 1234",
+            "smsFrom": "SMS Aero",
+            "idSms": null,
+            "status": 1,
+            "extendStatus": "delivery",
+            "cost": "1.00",
+            "dateCreate": 1732796285
+        }
+        """
+        return self.request("telegram/status", {"id": int(telegram_id)})
+
     def phone_validation(self, number: Union[int, List[int]]) -> None:
         """
         Validates the phone number or a list of phone numbers.
@@ -1415,6 +1486,41 @@ class SmsAero:
         if surname is not None and not isinstance(surname, str):
             raise TypeError("Surname must be a string.")
         self.page_validate(page)
+
+    def send_telegram_validate(
+        self,
+        number: Union[int, List[int]],
+        code: int,
+        sign: Optional[str] = None,
+        text: Optional[str] = None,
+    ) -> None:
+        """
+        Validates the parameters for the send_telegram method.
+
+        Parameters:
+        number (Union[int, List[int]]): The recipient's phone number or a list of phone numbers.
+        code (int): The Telegram code (4 to 8 digits).
+        sign (str, optional): The SMS sender name.
+        text (str, optional): The SMS message text.
+
+        Raises:
+        TypeError: If any of the parameters have an incorrect type.
+        ValueError: If any of the parameters have an incorrect value.
+        """
+        if not isinstance(code, int):
+            raise TypeError("Code must be an integer")
+        if not 4 <= len(str(code)) <= 8:
+            raise ValueError("Code length must be between 4 and 8 digits")
+        if sign is not None and not isinstance(sign, str):
+            raise TypeError("Sign must be a string")
+        if sign is not None and not 2 <= len(sign) <= 64:
+            raise ValueError("Sign length must be between 2 and 64 characters")
+        if text is not None and not isinstance(text, str):
+            raise TypeError("Text must be a string")
+        if text is not None and not 2 <= len(text) <= 640:
+            raise ValueError("Text length must be between 2 and 640 characters")
+
+        self.phone_validation(number)
 
     @staticmethod
     def init_validate(

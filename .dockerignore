@@ -7,6 +7,7 @@ dist
 build
 .env
 .pyc
+.pyo
 VERSIONS.md
 AUTHORS.md
 *.log
@@ -30,3 +31,4 @@ Dockerfile
 LICENSE
 MANIFEST.in
 .dccache
+__pycache__

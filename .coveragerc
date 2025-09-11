@@ -1,0 +1,22 @@
+[run]
+omit = 
+    */tests/*
+    */test_*
+    smsaero/command_line.py
+    setup.py
+    */venv/*
+    */build/*
+    */dist/*
+
+source = smsaero
+
+[report]
+show_missing = True
+
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    if TYPE_CHECKING:
+    raise NotImplementedError
+    pass

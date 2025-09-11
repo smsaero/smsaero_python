@@ -16,7 +16,7 @@ class TestSmsAero(unittest.TestCase):
         self.smsaero = SmsAero("admin@smsaero.ru", "test_api_key_lX8APMlgliHvkHk04i7")
 
     def test_default_signature_value(self):
-        self.assertEqual(self.smsaero.SIGNATURE, "Sms Aero")
+        self.assertEqual(self.smsaero.SIGNATURE, "SMS Aero")
 
     def test_get_gate_urls_with_url_gate(self):
         smsaero = SmsAero("admin@smsaero.ru", "test_api_key_lX8APMlgliHvkHk04i7", url_gate="test.gate")
@@ -231,7 +231,7 @@ class TestSmsAero(unittest.TestCase):
 
         mock_post.assert_called_once_with(
             "https://admin%40smsaero.ru:test_api_key_lX8APMlgliHvkHk04i7@gate.smsaero.ru/v2/sms/send",
-            json={"number": 79031234567, "text": "test message", "sign": "Sms Aero", "callbackUrl": None},
+            json={"number": 79031234567, "text": "test message", "sign": "SMS Aero", "callbackUrl": None},
             timeout=15,
         )
 
@@ -293,7 +293,7 @@ class TestSmsAero(unittest.TestCase):
 
         mock_post.assert_called_once_with(
             "https://admin%40smsaero.ru:test_api_key_lX8APMlgliHvkHk04i7@gate.test/v2/sms/send",
-            json={"number": 79031234567, "text": "test message", "sign": "Sms Aero", "callbackUrl": None},
+            json={"number": 79031234567, "text": "test message", "sign": "SMS Aero", "callbackUrl": None},
             timeout=15,
         )
 
@@ -315,7 +315,7 @@ class TestSmsAero(unittest.TestCase):
             json={
                 "number": 79031234567,
                 "text": "test message",
-                "sign": "Sms Aero",
+                "sign": "SMS Aero",
                 "callbackUrl": "https://smsaero.ru/callback",
             },
             timeout=15,
@@ -341,7 +341,7 @@ class TestSmsAero(unittest.TestCase):
             json={
                 "number": 79031234567,
                 "text": "test message",
-                "sign": "Sms Aero",
+                "sign": "SMS Aero",
                 "callbackUrl": None,
                 "dateSend": int(time.mktime(date_to_send.timetuple())),
             },
@@ -835,3 +835,53 @@ class TestSmsAero(unittest.TestCase):
                 "number": 79031234567,
             },
         )
+
+    @patch.object(SmsAero, "request")
+    def test_send_telegram(self, mock_request):
+        mock_request.return_value = {"success": True}
+        result = self.smsaero.send_telegram(79031234567, 1234)
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with(
+            "telegram/send",
+            {"number": 79031234567, "code": 1234}
+        )
+
+    @patch.object(SmsAero, "request")
+    def test_send_telegram_with_list_of_numbers(self, mock_request):
+        mock_request.return_value = {"success": True}
+        numbers = [79031234567, 79038805678]
+        code = 1234
+        result = self.smsaero.send_telegram(numbers, code)
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with(
+            "telegram/send",
+            {"numbers": numbers, "code": code}
+        )
+
+    @patch.object(SmsAero, "request")
+    def test_send_telegram_with_sign_and_text(self, mock_request):
+        mock_request.return_value = {"success": True}
+        result = self.smsaero.send_telegram(
+            79031234567, 
+            1234, 
+            sign="Test Sign", 
+            text="Your code is 1234"
+        )
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with(
+            "telegram/send",
+            {
+                "number": 79031234567, 
+                "code": 1234,
+                "sign": "Test Sign",
+                "text": "Your code is 1234"
+            }
+        )
+
+    @patch.object(SmsAero, "request")
+    def test_telegram_status(self, mock_request):
+        mock_request.return_value = {"success": True}
+        telegram_id = 12345
+        result = self.smsaero.telegram_status(telegram_id)
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with("telegram/status", {"id": telegram_id})

@@ -50,9 +50,6 @@ push to registry:
     - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" -t "$RELEASE_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE${tag}"
     - docker push "$RELEASE_IMAGE"
-    - docker build --pull -t "$CI_REGISTRY_IMAGE/slim${tag}" -t "$RELEASE_IMAGE_SLIM" . -f slim.Dockerfile
-    - docker push "$CI_REGISTRY_IMAGE/slim${tag}"
-    - docker push "$RELEASE_IMAGE_SLIM"
     - docker rmi -f "$CI_REGISTRY_IMAGE{tag}" || true
     - docker rmi -f "$RELEASE_IMAGE" || true
   rules:

@@ -17,7 +17,7 @@ pep8:
 .PHONY: scenario
 # target: scenario - Run custom scenario script
 scenario:
-	@bash -c "set -o allexport; source .env set; +o allexport; python tests/scenario.py"
+	@bash -c "set -a; source .env; set +a; python tests/scenario.py"
 
 .PHONY: coverage
 # target: coverage - Calculate code coverage

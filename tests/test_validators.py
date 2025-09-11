@@ -462,3 +462,36 @@ class TestSmsAeroValidators(unittest.TestCase):
                 None,
                 False,
             )
+
+    def test_send_telegram_validate(self):
+        with self.assertRaises(TypeError):
+            self.smsaero.send_telegram_validate("invalid_number", 1234)
+        with self.assertRaises(TypeError):
+            self.smsaero.send_telegram_validate(79031234567, "invalid_code")
+        with self.assertRaises(TypeError):
+            self.smsaero.send_telegram_validate(79031234567, 1234, sign=123)
+        with self.assertRaises(TypeError):
+            self.smsaero.send_telegram_validate(79031234567, 1234, text=123)
+        with self.assertRaises(ValueError):
+            self.smsaero.send_telegram_validate(79031234567, 123)  # code too short
+        with self.assertRaises(ValueError):
+            self.smsaero.send_telegram_validate(79031234567, 123456789)  # code too long
+        with self.assertRaises(ValueError):
+            self.smsaero.send_telegram_validate(79031234567, 1234, sign="T")  # sign too short
+        with self.assertRaises(ValueError):
+            self.smsaero.send_telegram_validate(79031234567, 1234, sign="T" * 65)  # sign too long
+        with self.assertRaises(ValueError):
+            self.smsaero.send_telegram_validate(79031234567, 1234, text="T")  # text too short
+        with self.assertRaises(ValueError):
+            self.smsaero.send_telegram_validate(79031234567, 1234, text="T" * 641)  # text too long
+        with self.assertRaises(ValueError):
+            self.smsaero.send_telegram_validate(123, 1234)  # number too short
+        with self.assertRaises(ValueError):
+            self.smsaero.send_telegram_validate(1234567890123456, 1234)  # number too long
+        with self.assertRaises(ValueError):
+            self.smsaero.send_telegram_validate([123, 1234567890123456], 1234)  # mixed invalid numbers
+
+    def test_send_telegram_validate_without_phonenumbers(self):
+        smsaero = SmsAero("admin@smsaero.ru", "test_api_key_lX8APMlgliHvkHk04i7", allow_phone_validation=False)
+        smsaero.send_telegram_validate(number=[79031234567], code=1234)
+        smsaero.send_telegram_validate(number=79031234567, code=1234)

@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [3.1.0]
+
+### Added
+- Added Telegram code sending functionality.
+
+### Fixed
+- Fixed pylint warnings
+
+### Changed
+- Refined exception handling strategy to catch only specific exceptions
+- Improved error handling best practices following Python guidelines
+
+
 ## [3.0.0]
 
 ### Added

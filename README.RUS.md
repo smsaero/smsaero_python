@@ -1,4 +1,4 @@
-# SmsAero клиент
+# Python библиотека для отправки SMS сообщений через Rest API на сервис SMS Aero
 
 [![PyPI version](https://badge.fury.io/py/smsaero-api.svg)](https://badge.fury.io/py/smsaero-api)
 [![Python Versions](https://img.shields.io/pypi/pyversions/smsaero-api.svg)](https://pypi.org/project/smsaero-api/)
@@ -37,10 +37,32 @@ def send_sms(phone: int, message: str) -> dict:
     return api.send_sms(phone, message)
 
 
+def send_telegram_code(phone: int, code: int, sign: str = None, text: str = None) -> dict:
+    """
+    Отправка кода в Telegram
+
+    Параметры:
+    phone (int): Номер телефона, на который будет отправлен код.
+    code (int): Код Telegram (от 4 до 8 цифр).
+    sign (str, optional): Имя отправителя SMS для резервного варианта.
+    text (str, optional): Текст SMS сообщения для резервного варианта.
+
+    Возвращает:
+    dict: Словарь, содержащий ответ от API SmsAero.
+    """
+    api = SmsAero(SMSAERO_EMAIL, SMSAERO_API_KEY)
+    return api.send_telegram(phone, code, sign, text)
+
+
 if __name__ == '__main__':
     try:
+        # Отправка SMS
         result = send_sms(79038805678, 'Hello, World!')
         pprint(result)
+        
+        # Отправка кода в Telegram
+        telegram_result = send_telegram_code(79038805678, 1234, "SMS Aero", "Ваш код 1234")
+        pprint(telegram_result)
     except SmsAeroException as e:
         print(f"An error occurred: {e}")
 ```
