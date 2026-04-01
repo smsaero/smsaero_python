@@ -20,7 +20,7 @@ test:
     - docker run --rm test /bin/bash -c 'flake8 --config=.flake8 ./smsaero'
     - docker run --rm test /bin/bash -c 'pylint ./smsaero'
     - docker run --rm test /bin/bash -c 'mypy ./smsaero'
-    - docker run --rm test /bin/bash -c 'pytest -v -s []'
+    - docker run --rm test /bin/bash -c 'pytest -v -s'
     - docker run --rm test /bin/bash -c 'coverage run --omit=app/command_line.py -m pytest && coverage report --fail-under=100'
   after_script:
     - docker rmi -f test || true

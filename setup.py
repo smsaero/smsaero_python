@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as file:
 
 setup(
     name="smsaero_api",
-    version="3.1.1",
+    version="3.2.0",
     description="Python client for working with SMS Aero API.",
     keywords=[
         "smsaero",

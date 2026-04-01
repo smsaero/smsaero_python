@@ -495,3 +495,28 @@ class TestSmsAeroValidators(unittest.TestCase):
         smsaero = SmsAero("admin@smsaero.ru", "test_api_key_lX8APMlgliHvkHk04i7", allow_phone_validation=False)
         smsaero.send_telegram_validate(number=[79031234567], code=1234)
         smsaero.send_telegram_validate(number=79031234567, code=1234)
+
+    def test_send_mobile_id_validate(self):
+        with self.assertRaises(TypeError):
+            self.smsaero.send_mobile_id_validate([79031234567], callback_url="https://ok.url")
+        with self.assertRaises(TypeError):
+            self.smsaero.send_mobile_id_validate(79031234567, sign=123, callback_url="https://ok.url")
+        with self.assertRaises(TypeError):
+            self.smsaero.send_mobile_id_validate(79031234567, callback_url=123)
+        with self.assertRaises(ValueError):
+            self.smsaero.send_mobile_id_validate(79031234567, sign="T", callback_url="https://ok.url")
+        with self.assertRaises(ValueError):
+            self.smsaero.send_mobile_id_validate(79031234567, sign="T" * 65, callback_url="https://ok.url")
+        with self.assertRaises(ValueError):
+            self.smsaero.send_mobile_id_validate(79031234567, callback_url="ftp://bad.url")
+        with self.assertRaises(ValueError):
+            self.smsaero.send_mobile_id_validate(123, callback_url="https://ok.url")
+        with self.assertRaises(ValueError):
+            self.smsaero.send_mobile_id_validate(79031234567)
+
+    def test_send_mobile_id_validate_string_number(self):
+        self.smsaero.send_mobile_id_validate("79031234567", callback_url="https://ok.url")
+
+    def test_send_mobile_id_validate_without_phonenumbers(self):
+        smsaero = SmsAero("admin@smsaero.ru", "test_api_key_lX8APMlgliHvkHk04i7", allow_phone_validation=False)
+        smsaero.send_mobile_id_validate(number=79031234567, callback_url="https://ok.url")
