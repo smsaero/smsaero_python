@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [3.2.0]
+
+### Added
+- Added Mobile ID authorization support: `send_mobile_id`, `mobile_id_status`, `verify_mobile_id`.
+
+### Fixed
+- Fixed pytest compatibility with pytest 9.x (removed invalid `[]` path argument).
+- Fixed missing test coverage for `callbackFormat` parameter in `send_sms`.
+
 ## [3.1.0]
 
 ### Added

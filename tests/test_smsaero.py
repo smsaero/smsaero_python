@@ -246,6 +246,22 @@ class TestSmsAero(unittest.TestCase):
             "sms/send", {"numbers": numbers, "text": text, "sign": self.smsaero.SIGNATURE, "callbackUrl": None}
         )
 
+    @patch.object(SmsAero, "request")
+    def test_send_sms_with_callback_format(self, mock_request):
+        mock_request.return_value = {"success": True}
+        result = self.smsaero.send_sms(79031234567, "Hello", callback_format="json")
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with(
+            "sms/send",
+            {
+                "number": 79031234567,
+                "text": "Hello",
+                "sign": self.smsaero.SIGNATURE,
+                "callbackUrl": None,
+                "callbackFormat": "json",
+            }
+        )
+
     @patch("requests.Session.post")
     def test_send_with_sign(self, mock_post):
         mock_response = MagicMock()
@@ -885,3 +901,64 @@ class TestSmsAero(unittest.TestCase):
         result = self.smsaero.telegram_status(telegram_id)
         self.assertEqual(result, {"success": True})
         mock_request.assert_called_once_with("telegram/status", {"id": telegram_id})
+
+    @patch.object(SmsAero, "request")
+    def test_send_mobile_id(self, mock_request):
+        mock_request.return_value = {"success": True}
+        result = self.smsaero.send_mobile_id(79031234567)
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with(
+            "mobile-id/send",
+            {"number": 79031234567, "sign": "SMS Aero"}
+        )
+
+    @patch.object(SmsAero, "request")
+    def test_send_mobile_id_with_sign(self, mock_request):
+        mock_request.return_value = {"success": True}
+        result = self.smsaero.send_mobile_id(79031234567, sign="Test Sign")
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with(
+            "mobile-id/send",
+            {"number": 79031234567, "sign": "Test Sign"}
+        )
+
+    @patch.object(SmsAero, "request")
+    def test_send_mobile_id_with_callback_url(self, mock_request):
+        mock_request.return_value = {"success": True}
+        result = self.smsaero.send_mobile_id(
+            79031234567, callback_url="https://example.com/callback"
+        )
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with(
+            "mobile-id/send",
+            {
+                "number": 79031234567,
+                "sign": "SMS Aero",
+                "callbackUrl": "https://example.com/callback",
+            }
+        )
+
+    @patch.object(SmsAero, "request")
+    def test_mobile_id_status(self, mock_request):
+        mock_request.return_value = {"success": True}
+        result = self.smsaero.mobile_id_status(12345)
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with("mobile-id/status", {"id": 12345})
+
+    @patch.object(SmsAero, "request")
+    def test_verify_mobile_id(self, mock_request):
+        mock_request.return_value = {"success": True}
+        result = self.smsaero.verify_mobile_id(12345, "1234")
+        self.assertEqual(result, {"success": True})
+        mock_request.assert_called_once_with(
+            "mobile-id/verify",
+            {"id": 12345, "code": "1234", "sign": "SMS Aero"}
+        )
+
+    def test_verify_mobile_id_invalid_code_type(self):
+        with self.assertRaises(TypeError):
+            self.smsaero.verify_mobile_id(12345, 1234)
+
+    def test_verify_mobile_id_empty_code(self):
+        with self.assertRaises(ValueError):
+            self.smsaero.verify_mobile_id(12345, "")

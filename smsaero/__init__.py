@@ -298,6 +298,7 @@ class SmsAero:
         sign: Optional[str] = None,
         date_to_send: Optional[datetime.datetime] = None,
         callback_url: Optional[str] = None,
+        callback_format: Optional[str] = None,
     ) -> Dict:
         """
         Sends a message to the specified number or numbers.
@@ -329,6 +330,8 @@ class SmsAero:
         self.send_sms_validate(number, text, sign, date_to_send, callback_url)
         data: Dict = {"text": text, "sign": sign or self.__sign, "callbackUrl": callback_url}
         data.update(**self.fill_nums(number))
+        if callback_format:
+            data["callbackFormat"] = callback_format
         if date_to_send:
             data.update({"dateSend": int(time.mktime(date_to_send.timetuple()))})
         return self.request("sms/testsend" if self.__test else "sms/send", data)
@@ -1175,6 +1178,98 @@ class SmsAero:
         """
         return self.request("telegram/status", {"id": int(telegram_id)})
 
+    def send_mobile_id(
+        self,
+        number: Union[int, str],
+        sign: Optional[str] = None,
+        callback_url: Optional[str] = None,
+    ) -> Dict:
+        """
+        Sends a Mobile ID request to the specified phone number.
+
+        Parameters:
+        number (Union[int, str]): The recipient's phone number.
+        sign (str, optional): The sender name. Defaults to the instance signature.
+        callback_url (str, optional): URL for receiving delivery status callbacks.
+
+        Returns:
+        Dict: The server's response in JSON format.
+
+        Example response:
+        {
+            "id": 273,
+            "number": "79031234567",
+            "authType": "SIM-PUSH",
+            "codeSms": "",
+            "status": 0,
+            "cost": 0,
+            "dateCreate": 1719119523,
+            "dateSend": 1719119523
+        }
+        """
+        self.send_mobile_id_validate(number, sign, callback_url)
+        sign_val = sign or self.__sign
+        data: Dict = {"number": number, "sign": sign_val}
+        if callback_url:
+            data["callbackUrl"] = callback_url
+        return self.request("mobile-id/send", data)
+
+    def mobile_id_status(self, req_id: int) -> Dict:
+        """
+        Retrieves the status of a Mobile ID request.
+
+        Parameters:
+        req_id (int): The request ID returned by the service when sending.
+
+        Returns:
+        Dict: The server's response in JSON format.
+
+        Example response:
+        {
+            "id": 273,
+            "number": "79031234567",
+            "authType": "SIM-PUSH",
+            "codeSms": "",
+            "status": 1,
+            "cost": 0,
+            "dateCreate": 1719119523,
+            "dateSend": 1719119523
+        }
+        """
+        return self.request("mobile-id/status", {"id": int(req_id)})
+
+    def verify_mobile_id(self, req_id: int, code: str) -> Dict:
+        """
+        Verifies a Mobile ID request with the provided code.
+
+        Parameters:
+        req_id (int): The request ID returned by the service when sending.
+        code (str): The verification code received by the user.
+
+        Returns:
+        Dict: The server's response in JSON format.
+
+        Example response:
+        {
+            "id": 273,
+            "number": "79031234567",
+            "authType": "SIM-PUSH",
+            "codeSms": "",
+            "status": 2,
+            "cost": 0,
+            "dateCreate": 1719119523,
+            "dateSend": 1719119523
+        }
+        """
+        if not isinstance(code, str):
+            raise TypeError("Code must be a string")
+        if not code:
+            raise ValueError("Code cannot be empty")
+        return self.request(
+            "mobile-id/verify",
+            {"id": int(req_id), "code": code, "sign": self.__sign},
+        )
+
     def phone_validation(self, number: Union[int, List[int]]) -> None:
         """
         Validates the phone number or a list of phone numbers.
@@ -1521,6 +1616,38 @@ class SmsAero:
             raise ValueError("Text length must be between 2 and 640 characters")
 
         self.phone_validation(number)
+
+    def send_mobile_id_validate(
+        self,
+        number: Union[int, str],
+        sign: Optional[str] = None,
+        callback_url: Optional[str] = None,
+    ) -> None:
+        """
+        Validates the parameters for the send_mobile_id method.
+
+        Parameters:
+        number (Union[int, str]): The recipient's phone number.
+        sign (str, optional): The sender name.
+        callback_url (str, optional): URL for receiving delivery status callbacks.
+
+        Raises:
+        TypeError: If any of the parameters have an incorrect type.
+        ValueError: If any of the parameters have an incorrect value.
+        """
+        if not isinstance(number, (int, str)):
+            raise TypeError("Number must be an integer or a string")
+        if sign is not None and not isinstance(sign, str):
+            raise TypeError("Sign must be a string")
+        if sign is not None and not 2 <= len(sign) <= 64:
+            raise ValueError("Sign length must be between 2 and 64 characters")
+        if callback_url is not None and not isinstance(callback_url, str):
+            raise TypeError("Callback URL must be a string")
+        if callback_url is not None and not callback_url.startswith(("http://", "https://")):
+            raise ValueError("Callback URL must start with http:// or https://")
+
+        if isinstance(number, int):
+            self.phone_validation(number)
 
     @staticmethod
     def init_validate(

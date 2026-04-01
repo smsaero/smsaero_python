@@ -15,11 +15,11 @@ notes=FIXME,XXX,TODO
 
 [FORMAT]
 max-line-length=120
-max-module-lines=1600
+max-module-lines=1800
 indent-string='    '
 
 [DESIGN]
 max-args=15
 max-branches=15
 max-attributes=9
-max-public-methods=50
+max-public-methods=55

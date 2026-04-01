@@ -1,7 +1,7 @@
 .PHONY: test
 # target: test - Run tests
 test:
-	@pytest -v -s []
+	@pytest -v -s
 
 .PHONY: tox
 # target: tox - Run tox for environment testing
